@@ -1,5 +1,0 @@
-﻿  vezba9.c
-c:\users\filip\desktop\orm2 projekat\pcap-project\project\vezba9.c(118): warning C4018: '<': signed/unsigned mismatch
-vezba9.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
-  Project.vcxproj -> C:\Users\Filip\Desktop\orm2 projekat\Pcap-Project\Project\.\Debug\Project.exe
-  Project.vcxproj -> .\Debug\Project.pdb (Full PDB)
