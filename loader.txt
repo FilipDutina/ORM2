@@ -1,0 +1,60 @@
+// loader
+#include<stdio.h>
+
+int main()
+{
+	long long size = 45000000;
+	long long i;
+	long long chunk = size / 100;	//one percentage
+	int loader = 0;
+	//int barWidth = 0.5;
+	//int pos;
+	int tw = 50;	//size of progress bar
+	int j;
+	int a = 100 / tw;	//with this number you divide 100 to get certain
+				//number of bar parts(if you know what i mean wink wink ;) ;))
+
+	printf("Size of file: %d Mb\n", size / 1000000);
+	printf("Loading file...\n");
+
+	for (i = 0; i < size; i++)
+	{
+		if (i % chunk == 0)
+		{
+			printf("[");
+	
+			for (j = 0; j < tw; j++)
+			{
+				if (j < (loader / a) - 1)
+					printf("=");
+				else if (j == (loader / a) - 1)
+					printf(">");
+				else
+					printf (" ");
+			}
+			printf("]");
+			printf(" %d%%\r", loader);
+			loader++;
+		}
+		
+		fflush(stdout);
+	}
+
+	printf("[");
+	for (j = 0; j < tw; j++)
+	{
+		if (j < (loader / a) - 1)
+			printf("=");
+		else if (j == (loader / a) - 1)
+			printf(">");
+		else
+			printf(" ");
+	}
+	printf("]");
+	printf(" %d%%\r", loader);
+	puts("");
+	printf("File has been loaded!\n");
+
+
+	return 0;
+}

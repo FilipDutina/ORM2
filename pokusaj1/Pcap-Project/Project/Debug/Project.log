@@ -1,0 +1,12 @@
+﻿  vezba7.c
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(168): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(169): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(64): warning C4101: 'result': unreferenced local variable
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(67): warning C4101: 'packet_data': unreferenced local variable
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(66): warning C4101: 'packet_header': unreferenced local variable
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(336): warning C4101: 'dst_port': unreferenced local variable
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(441): warning C4090: '=': different 'const' qualifiers
+c:\users\filip\desktop\orm2 projekat\pokusaj1\pcap-project\project\vezba7.c(444): warning C4090: '=': different 'const' qualifiers
+vezba7.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+  Project.vcxproj -> C:\Users\Filip\Desktop\orm2 projekat\pokusaj1\Pcap-Project\Project\.\Debug\Project.exe
+  Project.vcxproj -> .\Debug\Project.pdb (Full PDB)
