@@ -21,9 +21,15 @@
     <ClInclude Include="protocol_headers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="headerSetup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="vezba7.c">
+    <ClCompile Include="headerSetup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
