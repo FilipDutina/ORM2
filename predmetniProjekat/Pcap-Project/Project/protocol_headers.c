@@ -3,15 +3,21 @@
 
 
 /*protocol info*/
-unsigned char dst_mac[] = {0xc8, 0x0a, 0xa9, 0x68, 0xa1, 0x05}; //mitzi
-unsigned char src_mac[] = {0x4c, 0x72, 0xb9, 0x11, 0x63, 0xd4};	//dutja 
+//unsigned char dst_mac[] = {0xc8, 0x0a, 0xa9, 0x68, 0xa1, 0x05}; //mitzi ethernet
+//unsigned char src_mac[] = {0x4c, 0x72, 0xb9, 0x11, 0x63, 0xd4};	//dutja enhernet
+unsigned char dst_mac[] = {0xf0, 0x7b, 0xcb, 0x7c, 0xb3, 0x2b};	//mitzi wifi
+unsigned char src_mac[] = {0x44, 0x6d, 0x57, 0xea, 0x51, 0xd8};	//dutja wifi
+
 
 unsigned char next_protocol_header_ipv4[2] = { 0x08, 0x00 };
 unsigned int next_protocol_header_udp = 17;
 
-unsigned char dst_ip[] = { 192, 168, 0, 40 };	//mitzi
-unsigned char src_ip[] = { 192, 168, 0, 52 };	//dutja
-//unsigned char src_ip[] = {10,81,2,87};
+//unsigned char dst_ip[] = { 192, 168, 0, 40 };	//mitzi ethernet
+//unsigned char src_ip[] = { 192, 168, 0, 52 };	//dutja	ethernet
+unsigned char dst_ip[] = { 192, 168, 2, 30 };	//mitzi wifi
+unsigned char src_ip[] = { 192, 168, 2, 20 };	//dutja	wifi
+
+
 /*function prototypes*/
 unsigned short calculate_checksum(unsigned char*);
 
