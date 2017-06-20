@@ -227,6 +227,9 @@ unsigned char* setup_header_wifi(unsigned char* data_buffer, unsigned char* pass
 	return header;
 }
 
+
+
+
 unsigned short calculate_checksum(unsigned char* header)
 {
 	unsigned int header_checksum_calc = 0;

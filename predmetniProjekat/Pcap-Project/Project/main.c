@@ -37,11 +37,14 @@ char** data_array;
 FILE* f;
 int number_of_packets = 0;
 unsigned char keyString[] = "FicoMico";
-static unsigned long id;
+
+unsigned long idZaPrvaDva = 0;
+unsigned long idZaEthernet = 0;
+unsigned long idZaWiFi = 0;
+
 unsigned long fileSize;
 unsigned long sizeOfLast;
 pthread_mutex_t myMutex;
-
 
 /*Functions*/
 void init_ack_handler(unsigned char * user, const struct pcap_pkthdr * packet_header, const unsigned char * packet_data);
@@ -54,7 +57,7 @@ void *wifiThreadFunction(void *params);
 
 int main()
 {
-	int i = 0;
+	int i;
 	int packet_len;
 	int size_of_last;
 	int ethernet_header_size;
@@ -64,9 +67,9 @@ int main()
 	pcap_if_t* devices;
 	pcap_if_t* ethernet_device;
 	pcap_if_t* wifi_device;
-	
+
 	char error_buffer[PCAP_ERRBUF_SIZE];
-	unsigned char* data_ext = "test.jpg";
+	unsigned char* data_ext = "test.txt";
 	unsigned char* number_of_elements;
 
 	pthread_t wifiThread;
@@ -77,7 +80,7 @@ int main()
 		printf("Error in pcap_findalldevs: %s\n", error_buffer);
 		return -1;
 	}
-	
+
 	printf("Select first interface(ETHERNET): \n");
 	ethernet_device = select_device(devices);
 	if (ethernet_device == NULL)
@@ -93,7 +96,7 @@ int main()
 		pcap_freealldevs(devices);
 		return -1;
 	}
-	
+
 	/**************************************************************/
 	/***** Open ethernet adapter *****/
 	if ((eth_handle = pcap_open_live(ethernet_device->name, 65536, 1, 50, error_buffer)) == NULL)
@@ -118,18 +121,19 @@ int main()
 	printf("Total number of packets: %s\n", number_of_elements);
 	puts("");
 	printf("Sending data extension and number of packets...\n\n");
-	
+
+	pthread_mutex_init(&myMutex, NULL);
 	/*Sending name and number of packets*/
 	sendFirstTwoPackets(data_ext, packet_data, number_of_elements, packet_len);
-	
+
 	printf("Data extension sent and number of packets sent!\n\n");
 
 	/*Receiving ACK and if necessary sending first two packets again*/
-	while(pcap_loop(eth_handle, 0, init_ack_handler, NULL) != -2)
+	while (pcap_loop(eth_handle, 0, init_ack_handler, NULL) != -2)
 	{
 		puts("Sending packets again!\n\n");
 		sendFirstTwoPackets(data_ext, packet_data, number_of_elements, packet_len);
-		Sleep(50);
+		Sleep(20);
 	}
 
 	printf("ACK has been received!\n");
@@ -137,64 +141,78 @@ int main()
 	puts("");
 	puts("***************************************************\n\n");
 	puts("***************************************************\n\n");
+
 	/************SENDING HALF OF THE FILE OVER WIFI************/
-	/***** Sending half of the file over wifi *****/
-	//pthread_create(&wifiThread, NULL, wifiThreadFunction, NULL);
-	//pthread_mutex_init(&myMutex, NULL);
+	pthread_create(&wifiThread, NULL, wifiThreadFunction, NULL);
+	/**********************************************************/
 
 	/************SENDING HALF OF THE FILE OVER ETHERNET************/
-	for (int i = 0; i < number_of_packets; i++)
+	for (int i = 0; i < number_of_packets / 2; i++)
 	{
 		puts("SENDING HALF OF THE FILE OVER ETHERNET!");
-		id = i + 3;
+
+		pthread_mutex_lock(&myMutex);
+		idZaEthernet = i + 3;
+		pthread_mutex_unlock(&myMutex);
+		printf("\n\nIDDDDD %d\n", i);
+
 		if (i != number_of_packets - 1)
 		{
-			packet_data = setup_header_ethernet(data_array[i], packet_data, DEFAULT_BUFLEN, id);
+			pthread_mutex_lock(&myMutex);
+			packet_data = setup_header_ethernet(data_array[i], packet_data, DEFAULT_BUFLEN, idZaEthernet);
+			pthread_mutex_unlock(&myMutex);
+			puts("a");
 			if (pcap_sendpacket(eth_handle, packet_data, DEFAULT_BUFLEN + TOTAL_HEADER_SIZE) == -1)
 			{
 				printf("Packet %d not sent!\n", i);
 				break;
 			}
-			Sleep(1);
-
+			Sleep(20);
 			/*Receive ACK for current packet*/
+			puts("D");
 			while (pcap_loop(eth_handle, 0, ack_handler_ethernet, NULL) != -2)
 			{
+				
 				puts("Sending packets again!\n\n");
 				pcap_sendpacket(eth_handle, packet_data, DEFAULT_BUFLEN + TOTAL_HEADER_SIZE);
-				Sleep(50);
+				Sleep(20);
 			}
+			puts("c");
 		}
 		else
 		{
-			packet_data = setup_header_ethernet(data_array[i], packet_data, size_of_last, id);
-			printf("*** Size of last: %d ***\n\n", size_of_last + 56);
+			pthread_mutex_lock(&myMutex);
+			packet_data = setup_header_ethernet(data_array[i], packet_data, size_of_last, idZaEthernet);
+			pthread_mutex_unlock(&myMutex);
+			printf("\n*** Size of last: %d ***\n\n", size_of_last + 56);
 
 			if (pcap_sendpacket(eth_handle, packet_data, size_of_last + TOTAL_HEADER_SIZE) == -1)
 			{
 				printf("Packet %d not sent!\n", i);
 				break;
 			}
-			Sleep(1);
+			Sleep(20);
 
 			/*Receive ACK for current packet*/
 			while (pcap_loop(eth_handle, 0, ack_handler_ethernet, NULL) != -2)
 			{
 				puts("Sending packets again!\n\n");
 				pcap_sendpacket(eth_handle, packet_data, size_of_last + TOTAL_HEADER_SIZE);
-				Sleep(50);
+				Sleep(20);
 			}
 		}
 	}
+
 	
+
+	pthread_join(wifiThread, NULL);
+
 	printf("D A T A   S E N T!\nTotal number of data packages sent -> %d + first two packets(name and size)\n", number_of_packets);
 	puts("");
 	free(packet_data);
 	free(data_array);
 	pcap_close(eth_handle);
 	pcap_close(wifi_handle);
-
-
 
 	return 0;
 }
@@ -206,8 +224,6 @@ int main()
 
 void init_ack_handler(unsigned char * user, const struct pcap_pkthdr * packet_header, const unsigned char * packet_data)
 {
-	//puts("Entered FIRST ACK!\n");
-	puts("USAO U PRVI ACK");
 	ethernet_header * eh = (ethernet_header *)packet_data;
 	if (ntohs(eh->type) != 0x800)
 	{
@@ -230,8 +246,6 @@ void init_ack_handler(unsigned char * user, const struct pcap_pkthdr * packet_he
 
 	if (strcmp(custom_header, keyString) == 0 && num == number_of_packets)
 	{
-		//puts("Left FIRST ACK!\n\n");
-		puts("NAPUSTIO PRVI ACK");
 		printf("First two packets (name and size) have been sent!\n\n");
 		pcap_breakloop(eth_handle);
 	}
@@ -241,11 +255,15 @@ void sendFirstTwoPackets(unsigned char* data_ext, unsigned char* packet_data, un
 {
 	for (int i = 0; i < 2; i++)
 	{
-		id = i + 1;
+		pthread_mutex_lock(&myMutex);
+		idZaPrvaDva = i + 1;
+		pthread_mutex_unlock(&myMutex);
 		if (i == 0)
 		{
-			packet_data = setup_header_ethernet(data_ext, packet_data, strlen(data_ext) + 1, id);
-			//printf("First ID: %d\n", id);
+			pthread_mutex_lock(&myMutex);
+			packet_data = setup_header_ethernet(data_ext, packet_data, strlen(data_ext) + 1, idZaPrvaDva);
+			pthread_mutex_unlock(&myMutex);
+			
 			if (pcap_sendpacket(eth_handle, packet_data, strlen(data_ext) + 1 + TOTAL_HEADER_SIZE) == -1)
 			{
 				printf("Packet %d not sent!\n", i);
@@ -255,8 +273,10 @@ void sendFirstTwoPackets(unsigned char* data_ext, unsigned char* packet_data, un
 		}
 		else
 		{
-			packet_data = setup_header_ethernet(number_of_elements, packet_data, strlen(number_of_elements) + 1, id);
-			//printf("Second ID: %d\n\n", id);
+			pthread_mutex_lock(&myMutex);
+			packet_data = setup_header_ethernet(number_of_elements, packet_data, strlen(number_of_elements) + 1, idZaPrvaDva);
+			pthread_mutex_unlock(&myMutex);
+
 			if (pcap_sendpacket(eth_handle, packet_data, packet_len + TOTAL_HEADER_SIZE) == -1)
 			{
 				return -1;
@@ -269,7 +289,7 @@ void sendFirstTwoPackets(unsigned char* data_ext, unsigned char* packet_data, un
 void ack_handler_ethernet(unsigned char * user, const struct pcap_pkthdr * packet_header, const unsigned char * packet_data)
 {
 	puts("Entered ethernet ACK!");
-
+	printf("%d\n", idZaEthernet);
 	ethernet_header * eh = (ethernet_header *)packet_data;
 	if (ntohs(eh->type) != 0x800)
 	{
@@ -279,7 +299,7 @@ void ack_handler_ethernet(unsigned char * user, const struct pcap_pkthdr * packe
 
 	ip_header * ih = (ip_header *)(packet_data + sizeof(ethernet_header));
 
-
+	printf("%d\n", ih->next_protocol);
 	if (ih->next_protocol != 17)
 	{
 		printf("Not an udp packet!\n");
@@ -288,21 +308,24 @@ void ack_handler_ethernet(unsigned char * user, const struct pcap_pkthdr * packe
 	unsigned char * custom_header = packet_data + 42;	//string
 	unsigned long num = (*(custom_header + 9) << 32) + (*(custom_header + 10) << 24) + (*(custom_header + 11) << 16) + (*(custom_header + 12) << 8) + *(custom_header + 13);
 
-	printf("ID of sent packet: %d\n", id);
+	//pthread_mutex_lock(&myMutex);
+
+	printf("ID of sent packet: %d\n", idZaEthernet);
 	printf("Returned ID: %d\n", num);
 
-	if (strcmp(custom_header, keyString) == 0 && num == id)
+	if (strcmp(custom_header, keyString) == 0 && num == idZaEthernet)
 	{
-		//puts("Left MAIN ACK!\n");
-		//printf("ID of sent packet: %d\n\n", id);
+		Sleep(20);
+		puts("Left Ethernet ACK!");
 		pcap_breakloop(eth_handle);
 	}
+	//pthread_mutex_unlock(&myMutex);
 }
 
 void ack_handler_wifi(unsigned char * user, const struct pcap_pkthdr * packet_header, const unsigned char * packet_data)
 {
 	puts("Entered WiFi ACK!");
-
+	printf("%d\n", idZaWiFi);
 	ethernet_header * eh = (ethernet_header *)packet_data;
 	if (ntohs(eh->type) != 0x800)
 	{
@@ -321,15 +344,18 @@ void ack_handler_wifi(unsigned char * user, const struct pcap_pkthdr * packet_he
 	unsigned char * custom_header = packet_data + 42;	//string
 	unsigned long num = (*(custom_header + 9) << 32) + (*(custom_header + 10) << 24) + (*(custom_header + 11) << 16) + (*(custom_header + 12) << 8) + *(custom_header + 13);
 
-	printf("ID of sent packet: %d\n", id);
+	pthread_mutex_lock(&myMutex);
+
+	printf("ID of sent packet: %d\n", idZaWiFi);
 	printf("Returned ID: %d\n", num);
 
-	if (strcmp(custom_header, keyString) == 0 && num == id)
+	if (strcmp(custom_header, keyString) == 0 && num == idZaWiFi)
 	{
-		//puts("Left MAIN ACK!\n");
-		//printf("ID of sent packet: %d\n\n", id);
+		Sleep(20);
+		puts("Left WiFi ACK!");
 		pcap_breakloop(wifi_handle);
 	}
+	pthread_mutex_unlock(&myMutex);
 }
 
 pcap_if_t* select_device(pcap_if_t* devices)
@@ -373,45 +399,43 @@ pcap_if_t* select_device(pcap_if_t* devices)
 
 void *wifiThreadFunction(void *params)
 {
-	puts("SENDING HALF OF THE FILE OVER WIFI!");
-	int i = 0;
-	id = i + 3;
-	unsigned char *packetData = NULL;
+	int i;
+	unsigned char* packet_data2;
+
 	for (i = number_of_packets / 2; i < number_of_packets; i++)
 	{
-		int len = DEFAULT_BUFLEN + TOTAL_HEADER_SIZE;
+		puts("SENDING HALF OF THE FILE OVER WIFI!");
+		int len = DEFAULT_BUFLEN;
+
 		if (i == number_of_packets - 1)
 		{
-			len = fileSize % DEFAULT_BUFLEN;
+			len = sizeOfLast;
 		}
-		packetData = (unsigned char*)malloc(len);
+
+		packet_data2 = (char*)malloc(len);
 
 		pthread_mutex_lock(&myMutex);
-		packetData = data_array[i];
+		idZaWiFi = i + 3;
+		
+		packet_data2 = setup_header_wifi(data_array[i], packet_data2, len, idZaWiFi);
 		pthread_mutex_unlock(&myMutex);
 
-		if (i != number_of_packets - 1)
-		{
-			packetData = setup_header_wifi(data_array[i], packetData, DEFAULT_BUFLEN, id);
-		}
-		else
-		{
-			packetData = setup_header_wifi(data_array[i], packetData, sizeOfLast, id);
-		}
+		if (number_of_packets - 1 == i)
+			printf("POSLEDNJI: %d\n\n", len);
 
-		if (pcap_sendpacket(wifi_handle, packetData, len) == -1)
+		if (pcap_sendpacket(wifi_handle, packet_data2, len + TOTAL_HEADER_SIZE) == -1)
 		{
 			printf("Packet %d not sent!\n", i);
 			break;
 		}
-		Sleep(1);
-
+		Sleep(20);
+	
 		/*Receive ACK for current packet*/
 		while (pcap_loop(wifi_handle, 0, ack_handler_wifi, NULL) != -2)
 		{
 			puts("Sending packets again!\n\n");
-			pcap_sendpacket(wifi_handle, packetData, len);
-			Sleep(50);
+			pcap_sendpacket(wifi_handle, packet_data2, len);
+			Sleep(20);
 		}
 	}
 

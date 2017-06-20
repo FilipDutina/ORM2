@@ -6,7 +6,7 @@ char** read_from_file(FILE* f, char** data_array, int* num_of_parts, int* size_o
 	int remain = 0;
 	int number_of_parts = 0;
 
-	f = fopen("test1.jpg", "rb");
+	f = fopen("test.txt", "rb");
 	if (f == NULL)
 	{
 		printf("No such file found!\n");
