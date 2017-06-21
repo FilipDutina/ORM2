@@ -24,6 +24,12 @@ c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(369): 
 c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(445): warning C4013: 'setup_header_wifi' undefined; assuming extern returning int
 c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(445): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
 c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(488): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
+  file_manipulation.c
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\file_manipulation.c(4): warning C4029: declared formal parameter list different from definition
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\file_manipulation.c(13): warning C4047: 'return': 'char **' differs in levels of indirection from 'int'
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\file_manipulation.c(9): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+  Generating Code...
 c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(509): warning C4716: 'wifiThreadFunction': must return a value
 file_manipulation.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
   Project.vcxproj -> C:\Users\Filip\Desktop\ORM2\predmetniProjekat\Pcap-Project\Project\.\Debug\Project.exe
