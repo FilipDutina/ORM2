@@ -1,29 +1,30 @@
 ﻿  main.c
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(115): warning C4020: 'read_from_file': too many actual parameters
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(162): warning C4013: 'setup_header_ethernet' undefined; assuming extern returning int
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(162): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(185): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(65): warning C4101: 'sentBytes': unreferenced local variable
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(64): warning C4101: 'device_number': unreferenced local variable
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(63): warning C4101: 'ethernet_header_size': unreferenced local variable
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(60): warning C4101: 'i': unreferenced local variable
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(232): warning C4098: 'init_ack_handler': 'void' function returning a value
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(242): warning C4098: 'init_ack_handler': 'void' function returning a value
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(245): warning C4293: '<<': shift count negative or too big, undefined behavior
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(244): warning C4090: 'initializing': different 'const' qualifiers
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(264): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(270): warning C4098: 'sendFirstTwoPackets': 'void' function returning a value
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(277): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(282): warning C4098: 'sendFirstTwoPackets': 'void' function returning a value
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(306): warning C4098: 'ack_handler_ethernet': 'void' function returning a value
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(309): warning C4293: '<<': shift count negative or too big, undefined behavior
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(308): warning C4090: 'initializing': different 'const' qualifiers
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(342): warning C4098: 'ack_handler_wifi': 'void' function returning a value
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(345): warning C4293: '<<': shift count negative or too big, undefined behavior
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(344): warning C4090: 'initializing': different 'const' qualifiers
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(420): warning C4013: 'setup_header_wifi' undefined; assuming extern returning int
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(420): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
-c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(442): warning C4716: 'wifiThreadFunction': must return a value
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(123): warning C4020: 'read_from_file': too many actual parameters
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(174): warning C4013: 'setup_header_ethernet' undefined; assuming extern returning int
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(174): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(210): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(73): warning C4101: 'sentBytes': unreferenced local variable
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(72): warning C4101: 'device_number': unreferenced local variable
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(71): warning C4101: 'ethernet_header_size': unreferenced local variable
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(68): warning C4101: 'i': unreferenced local variable
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(257): warning C4098: 'init_ack_handler': 'void' function returning a value
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(267): warning C4098: 'init_ack_handler': 'void' function returning a value
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(270): warning C4293: '<<': shift count negative or too big, undefined behavior
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(269): warning C4090: 'initializing': different 'const' qualifiers
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(289): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(295): warning C4098: 'sendFirstTwoPackets': 'void' function returning a value
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(302): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(307): warning C4098: 'sendFirstTwoPackets': 'void' function returning a value
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(331): warning C4098: 'ack_handler_ethernet': 'void' function returning a value
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(334): warning C4293: '<<': shift count negative or too big, undefined behavior
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(333): warning C4090: 'initializing': different 'const' qualifiers
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(367): warning C4098: 'ack_handler_wifi': 'void' function returning a value
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(370): warning C4293: '<<': shift count negative or too big, undefined behavior
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(369): warning C4090: 'initializing': different 'const' qualifiers
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(445): warning C4013: 'setup_header_wifi' undefined; assuming extern returning int
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(445): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(488): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 'int'
+c:\users\filip\desktop\orm2\predmetniprojekat\pcap-project\project\main.c(509): warning C4716: 'wifiThreadFunction': must return a value
 file_manipulation.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
   Project.vcxproj -> C:\Users\Filip\Desktop\ORM2\predmetniProjekat\Pcap-Project\Project\.\Debug\Project.exe
   Project.vcxproj -> .\Debug\Project.pdb (Full PDB)

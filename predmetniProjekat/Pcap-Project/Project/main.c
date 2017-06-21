@@ -8,8 +8,8 @@
 // ================================================================
 
 /*
-	dutja MAG
-	20. VI 2017.
+dutja MAG
+20. VI 2017.
 */
 
 // Include libraries
@@ -54,6 +54,14 @@ void ack_handler_wifi(unsigned char * user, const struct pcap_pkthdr * packet_he
 pcap_if_t* select_device(pcap_if_t* devices);
 void *wifiThreadFunction(void *params);
 /***********/
+int countEthernet = 0;
+int countWifi = 0;
+
+int flagEthernetWorks = 1;
+int flagWifiWorks = 1;
+
+unsigned long CURRENT_POSITION_OF_ETHERNET_FAILURE;
+unsigned long CURRENT_POSITION_OF_WIFI_FAILURE;
 
 int main()
 {
@@ -69,7 +77,7 @@ int main()
 	pcap_if_t* wifi_device;
 
 	char error_buffer[PCAP_ERRBUF_SIZE];
-	unsigned char* data_ext = "test.txt";
+	unsigned char* data_ext = "test.mp3";
 	unsigned char* number_of_elements;
 
 	pthread_t wifiThread;
@@ -99,14 +107,14 @@ int main()
 
 	/**************************************************************/
 	/***** Open ethernet adapter *****/
-	if ((eth_handle = pcap_open_live(ethernet_device->name, 65536, 1, 50, error_buffer)) == NULL)
+	if ((eth_handle = pcap_open_live(ethernet_device->name, 65536, 0, 10, error_buffer)) == NULL)
 	{
 		printf("\n Unable to open adapter %s.\n", ethernet_device->name);
 		return -1;
 	}
 	/**************************************************************/
 	/***** Open wifi adapter *****/
-	if ((wifi_handle = pcap_open_live(wifi_device->name, 65536, 1, 50, error_buffer)) == NULL)
+	if ((wifi_handle = pcap_open_live(wifi_device->name, 65536, 0, 10, error_buffer)) == NULL)
 	{
 		printf("\n Unable to open adapter %s.\n", ethernet_device->name);
 		return -1;
@@ -133,7 +141,7 @@ int main()
 	{
 		puts("Sending packets again!\n\n");
 		sendFirstTwoPackets(data_ext, packet_data, number_of_elements, packet_len);
-		Sleep(20);
+		Sleep(2);
 	}
 
 	printf("ACK has been received!\n");
@@ -149,12 +157,16 @@ int main()
 	/************SENDING HALF OF THE FILE OVER ETHERNET************/
 	for (int i = 0; i < number_of_packets / 2; i++)
 	{
+		flagEthernetWorks = 1;
+		countEthernet = 0;
+
 		puts("SENDING HALF OF THE FILE OVER ETHERNET!");
 
 		pthread_mutex_lock(&myMutex);
 		idZaEthernet = i + 3;
 		pthread_mutex_unlock(&myMutex);
 		printf("\n\nIDDDDD %d\n", i);
+
 
 		if (i != number_of_packets - 1)
 		{
@@ -167,15 +179,28 @@ int main()
 				printf("Packet %d not sent!\n", i);
 				break;
 			}
-			Sleep(20);
+			Sleep(2);
 			/*Receive ACK for current packet*/
 			puts("D");
 			while (pcap_loop(eth_handle, 0, ack_handler_ethernet, NULL) != -2)
 			{
-				
+				countEthernet++;
+				puts("+++");
 				puts("Sending packets again!\n\n");
 				pcap_sendpacket(eth_handle, packet_data, DEFAULT_BUFLEN + TOTAL_HEADER_SIZE);
-				Sleep(20);
+				Sleep(2);
+				
+				if (countEthernet == 500)	//wait ten seconds
+				{
+					flagEthernetWorks = 0;
+					break;
+				}
+
+			}
+			if (flagEthernetWorks == 0)
+			{
+				CURRENT_POSITION_OF_ETHERNET_FAILURE = i;
+				break;
 			}
 			puts("c");
 		}
@@ -191,19 +216,19 @@ int main()
 				printf("Packet %d not sent!\n", i);
 				break;
 			}
-			Sleep(20);
+			Sleep(2);
 
 			/*Receive ACK for current packet*/
 			while (pcap_loop(eth_handle, 0, ack_handler_ethernet, NULL) != -2)
 			{
 				puts("Sending packets again!\n\n");
 				pcap_sendpacket(eth_handle, packet_data, size_of_last + TOTAL_HEADER_SIZE);
-				Sleep(20);
+				Sleep(2);
 			}
 		}
 	}
 
-	
+
 
 	pthread_join(wifiThread, NULL);
 
@@ -263,7 +288,7 @@ void sendFirstTwoPackets(unsigned char* data_ext, unsigned char* packet_data, un
 			pthread_mutex_lock(&myMutex);
 			packet_data = setup_header_ethernet(data_ext, packet_data, strlen(data_ext) + 1, idZaPrvaDva);
 			pthread_mutex_unlock(&myMutex);
-			
+
 			if (pcap_sendpacket(eth_handle, packet_data, strlen(data_ext) + 1 + TOTAL_HEADER_SIZE) == -1)
 			{
 				printf("Packet %d not sent!\n", i);
@@ -315,7 +340,7 @@ void ack_handler_ethernet(unsigned char * user, const struct pcap_pkthdr * packe
 
 	if (strcmp(custom_header, keyString) == 0 && num == idZaEthernet)
 	{
-		Sleep(20);
+		Sleep(2);
 		puts("Left Ethernet ACK!");
 		pcap_breakloop(eth_handle);
 	}
@@ -351,7 +376,7 @@ void ack_handler_wifi(unsigned char * user, const struct pcap_pkthdr * packet_he
 
 	if (strcmp(custom_header, keyString) == 0 && num == idZaWiFi)
 	{
-		Sleep(20);
+		Sleep(2);
 		puts("Left WiFi ACK!");
 		pcap_breakloop(wifi_handle);
 	}
@@ -399,7 +424,7 @@ pcap_if_t* select_device(pcap_if_t* devices)
 
 void *wifiThreadFunction(void *params)
 {
-	int i;
+	int i, j;
 	unsigned char* packet_data2;
 
 	for (i = number_of_packets / 2; i < number_of_packets; i++)
@@ -416,7 +441,7 @@ void *wifiThreadFunction(void *params)
 
 		pthread_mutex_lock(&myMutex);
 		idZaWiFi = i + 3;
-		
+
 		packet_data2 = setup_header_wifi(data_array[i], packet_data2, len, idZaWiFi);
 		pthread_mutex_unlock(&myMutex);
 
@@ -428,15 +453,57 @@ void *wifiThreadFunction(void *params)
 			printf("Packet %d not sent!\n", i);
 			break;
 		}
-		Sleep(20);
-	
+		Sleep(2);
+
 		/*Receive ACK for current packet*/
 		while (pcap_loop(wifi_handle, 0, ack_handler_wifi, NULL) != -2)
 		{
 			puts("Sending packets again!\n\n");
 			pcap_sendpacket(wifi_handle, packet_data2, len);
-			Sleep(20);
+			Sleep(2);
+		}
+
+		if (i == number_of_packets - 1)
+		{
+			if (flagEthernetWorks == 0)
+			{
+				while (1)
+				{
+					puts("*******MAJOR FAILURE! ETHERNET DOWN! SENDING VIA WIFI!!!********\n\n");
+					for (j = CURRENT_POSITION_OF_ETHERNET_FAILURE; j < number_of_packets / 2; j++)
+					{
+						puts("SENDING HALF OF THE FILE OVER WIFI!");
+						int len = DEFAULT_BUFLEN;
+
+						if (j == (number_of_packets / 2 - 1))
+						{
+							len = sizeOfLast;
+						}
+
+						packet_data2 = (char*)malloc(len);
+
+						pthread_mutex_lock(&myMutex);
+						idZaWiFi = j + 3;
+
+						packet_data2 = setup_header_wifi(data_array[i], packet_data2, len, idZaWiFi);
+						pthread_mutex_unlock(&myMutex);
+
+						if (number_of_packets - 1 == j)
+							printf("POSLEDNJI: %d\n\n", len);
+
+						if (pcap_sendpacket(wifi_handle, packet_data2, len + TOTAL_HEADER_SIZE) == -1)
+						{
+							printf("Packet %d not sent!\n", i);
+							break;
+						}
+						Sleep(2);
+
+
+						if (j == (number_of_packets / 2 - 1))
+							break;
+					}
+				}
+			}
 		}
 	}
-
 }
